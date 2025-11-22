@@ -16,7 +16,7 @@
         #title-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at center, #7000df 0%, #100030 100%);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 3000;
         }
         #fortnite-logo {
             font-size: 120px; color: white; letter-spacing: -5px; margin-bottom: 20px;
@@ -42,137 +42,256 @@
 
         /* --- LOBBY --- */
         #lobby-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; inset: 0;
             display: none;
             flex-direction: column;
-            justify-content: space-between;
-            padding: 20px 40px;
+            padding: 16px 26px 18px 26px;
             box-sizing: border-box;
-            background: radial-gradient(circle at top, #2843b8 0%, #050818 55%, #02030a 100%);
+            background: radial-gradient(circle at top, #3e7bff 0%, #1c38a0 40%, #02061a 100%);
             color: #fff;
-            z-index: 1500;
+            z-index: 2000;
         }
+
         #lobby-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 18px;
+            font-size: 16px;
             text-shadow: 2px 2px 0 #000;
+            margin-bottom: 10px;
         }
         #lobby-title {
-            font-size: 28px;
-            letter-spacing: 4px;
+            font-size: 22px;
+            letter-spacing: 3px;
+        }
+        #lobby-tabs {
+            display: flex;
+            gap: 24px;
+            font-size: 14px;
         }
         #lobby-tabs span {
-            margin-left: 24px;
-            opacity: 0.8;
+            opacity: 0.75;
             cursor: pointer;
+            position: relative;
         }
         #lobby-tabs span:first-child {
             opacity: 1;
             color: var(--gold);
         }
+        #lobby-tabs span:first-child::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: -4px;
+            height: 3px;
+            background: var(--gold);
+        }
+
         #lobby-main {
             flex: 1;
             display: flex;
-            align-items: flex-end;
-            gap: 40px;
+            margin-top: 10px;
+            gap: 20px;
         }
-        #lobby-left {
-            width: 340px;
+
+        /* PARTY / SQUAD AREA */
+        #lobby-party {
+            position: relative;
+            flex: 1.2;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .party-slot {
+            position: relative;
+            width: 18%;
+            max-width: 190px;
+            height: 80%;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 40px;
+            align-items: center;
+            justify-content: flex-end;
         }
-        #lobby-mode-pill {
-            background: rgba(0,0,0,0.6);
-            border: 2px solid white;
-            padding: 6px 16px;
-            align-self: flex-start;
+
+        .party-banner {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 82%;
+            border-radius: 12px 12px 0 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.15), rgba(0,0,0,0.25));
+            box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+        }
+        .banner-pink  { background: linear-gradient(180deg,#ff85d1,#ff4f7d); }
+        .banner-yellow{ background: linear-gradient(180deg,#ffe66c,#ffb92b); }
+        .banner-teal  { background: linear-gradient(180deg,#4fe4ff,#008dff); }
+        .banner-purple{ background: linear-gradient(180deg,#c07bff,#6a44ff); }
+
+        .party-center .party-banner {
+            transform: scale(1.15);
+            transform-origin: bottom center;
+        }
+
+        .party-character {
+            position: relative;
+            width: 100%;
+            height: 72%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .party-stand {
+            position: absolute;
+            bottom: 0;
+            width: 120%;
+            height: 18%;
+            border-radius: 50%;
+            background: radial-gradient(circle at top, #ffffff, #c0ddff);
+            box-shadow: 0 0 40px rgba(0,0,0,0.7);
+        }
+
+        .party-empty {
+            opacity: 0.45;
+        }
+
+        .party-footer {
+            position: relative;
+            margin-top: 6px;
+            text-align: center;
+            font-size: 13px;
+        }
+        .party-name {
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        .party-state {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* Skin switcher under center card */
+        #skin-switcher {
+            position: absolute;
+            bottom: 6%;
+            left: 50%;
+            transform: translateX(-50%) skewX(-10deg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0,0,0,0.45);
+            border: 2px solid rgba(255,255,255,0.75);
+            padding: 4px 12px;
+            font-size: 13px;
+        }
+        #skin-name {
+            min-width: 80px;
+            text-align: center;
+        }
+        .skin-arrow {
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            padding: 0 4px;
+        }
+
+        /* RIGHT HUD SIDE (SEASON / PLAY) */
+        #lobby-side {
+            flex: 0.7;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        #lobby-season-card {
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.2));
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.25);
+            padding: 12px 16px;
+            font-size: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+        #lobby-season-card h3 {
+            margin: 0 0 4px 0;
             font-size: 14px;
         }
+        .season-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2px 0;
+        }
+        .xp-bar {
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.15);
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .xp-fill {
+            width: 40%;
+            height: 100%;
+            background: linear-gradient(90deg,#7cffb2,#00ffea);
+        }
+        .challenge-row {
+            display:flex; justify-content:space-between; font-size:11px; opacity:.85;
+        }
+
+        #lobby-mode-card {
+            margin-top: auto;
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3));
+            border-radius: 16px;
+            border: 2px solid rgba(255,255,255,0.25);
+            padding: 14px 18px 18px 18px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.7);
+        }
+        #lobby-mode-head {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:8px;
+        }
+        .mode-label {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+        .mode-value {
+            font-size: 18px;
+        }
         #lobby-play-btn {
+            margin-top: 8px;
+            width: 100%;
             background: var(--gold);
             color: #000;
             border: 4px solid white;
-            padding: 22px 60px;
-            font-size: 30px;
-            font-family: 'Russo One', sans-serif;
+            padding: 18px 0;
+            font-size: 26px;
+            font-family: 'Russo One',sans-serif;
             text-transform: uppercase;
             transform: skewX(-10deg);
             cursor: pointer;
-            box-shadow: 0 10px 0 rgba(0,0,0,0.25);
-            align-self: flex-start;
-            transition: transform 0.08s, box-shadow 0.08s, filter 0.2s;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.3);
+            transition: transform 0.08s, box-shadow 0.08s, filter 0.18s;
         }
         #lobby-play-btn:hover {
-            filter: brightness(1.08);
+            filter: brightness(1.1);
             transform: skewX(-10deg) translateY(-2px);
         }
         #lobby-play-btn:active {
             transform: skewX(-10deg) translateY(4px);
-            box-shadow: 0 6px 0 rgba(0,0,0,0.25);
-        }
-        #lobby-tip {
-            font-size: 12px;
-            max-width: 260px;
-            color: #ddd;
-            opacity: 0.9;
-        }
-        #lobby-right {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            justify-content: flex-end;
-            margin-bottom: 30px;
-        }
-        #lobby-character-card {
-            position: relative;
-            width: 380px;
-            height: 420px;
-            border-radius: 20px;
-            background: radial-gradient(circle at top, rgba(255,255,255,0.3), rgba(21,47,94,0.3));
-            border: 2px solid rgba(255,255,255,0.25);
-            box-shadow: 0 30px 80px rgba(0,0,0,0.7);
-            overflow: hidden;
-            display: flex;
-            align-items: flex-end;
-            justify-content: center;
-        }
-        #lobby-character-card::before {
-            content: '';
-            position: absolute;
-            inset: -40%;
-            background: conic-gradient(from 0deg, #4fc3f7, #ffeb3b, #ff4081, #4fc3f7);
-            opacity: 0.25;
-            mix-blend-mode: screen;
-            animation: spinGlow 18s linear infinite;
-        }
-        #lobby-character-outline {
-            position: relative;
-            width: 220px;
-            height: 320px;
-            border-radius: 999px;
-            border: 3px solid rgba(255,255,255,0.7);
-            box-shadow: 0 0 30px rgba(0,0,0,0.9) inset;
-        }
-        #lobby-character-label {
-            position: absolute;
-            bottom: 16px;
-            left: 20px;
-            font-size: 16px;
-        }
-        #lobby-info {
-            margin-top: 12px;
-            font-size: 14px;
-            color: #ddd;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.3);
         }
 
-        @keyframes spinGlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        #lobby-bottom-bar {
+            font-size: 11px;
+            opacity: 0.75;
+            margin-top: 6px;
+            display:flex;
+            justify-content:space-between;
         }
 
         /* --- HUD --- */
@@ -242,6 +361,8 @@
         .end-text { font-size: 90px; color: white; margin: 0; text-shadow: 5px 5px 0 black; line-height: 0.9; text-align: center; }
         
         #storm-overlay { position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; display:none; background: radial-gradient(circle, transparent 60%, rgba(140,0,255,0.4) 100%); z-index: 100; }
+
+        button { font-family: 'Russo One', sans-serif; }
     </style>
 </head>
 <body>
@@ -258,25 +379,114 @@
             <div id="lobby-title" class="fn-text">BATTLE ROYALE</div>
             <div id="lobby-tabs" class="fn-text">
                 <span>PLAY</span>
+                <span>BATTLE PASS</span>
+                <span>CHALLENGES</span>
+                <span>COMPETE</span>
                 <span>LOCKER</span>
-                <span>ITEM SHOP</span>
+                <span>SHOP</span>
+                <span>CAREER</span>
             </div>
         </div>
+
         <div id="lobby-main">
-            <div id="lobby-left">
-                <div id="lobby-mode-pill" class="fn-text">SOLO • NO-FILL</div>
-                <button id="lobby-play-btn">PLAY</button>
-                <div id="lobby-tip">
-                    Tip: Press <strong>Shift</strong> to sprint, <strong>F</strong> to build, <strong>E</strong> to interact.
+            <!-- Squad / party cards -->
+            <div id="lobby-party">
+                <!-- Left slot -->
+                <div class="party-slot party-left party-empty">
+                    <div class="party-banner banner-pink"></div>
+                    <div class="party-character">
+                        <div class="party-stand"></div>
+                    </div>
+                    <div class="party-footer">
+                        <div class="party-name">Empty</div>
+                        <div class="party-state">Not ready</div>
+                    </div>
+                </div>
+
+                <!-- Center (player) -->
+                <div class="party-slot party-center">
+                    <div class="party-banner banner-teal"></div>
+                    <div class="party-character">
+                        <div class="party-stand"></div>
+                        <!-- actual 3D character is in the scene; this is just the stand -->
+                    </div>
+                    <div class="party-footer">
+                        <div class="party-name" id="player-name-label">NOBLE</div>
+                        <div class="party-state">Not ready</div>
+                    </div>
+                </div>
+
+                <!-- Right slots -->
+                <div class="party-slot party-right party-empty">
+                    <div class="party-banner banner-yellow"></div>
+                    <div class="party-character">
+                        <div class="party-stand"></div>
+                    </div>
+                    <div class="party-footer">
+                        <div class="party-name">Empty</div>
+                        <div class="party-state">Not ready</div>
+                    </div>
+                </div>
+
+                <div class="party-slot party-far party-empty">
+                    <div class="party-banner banner-purple"></div>
+                    <div class="party-character">
+                        <div class="party-stand"></div>
+                    </div>
+                    <div class="party-footer">
+                        <div class="party-name">Empty</div>
+                        <div class="party-state">Not ready</div>
+                    </div>
+                </div>
+
+                <!-- Skin switcher -->
+                <div id="skin-switcher" class="fn-text">
+                    <button class="skin-arrow" id="skin-prev">◀</button>
+                    <span id="skin-name">NOBLE</span>
+                    <button class="skin-arrow" id="skin-next">▶</button>
                 </div>
             </div>
-            <div id="lobby-right">
-                <div id="lobby-character-card">
-                    <div id="lobby-character-outline"></div>
-                    <div id="lobby-character-label" class="fn-text">DEFAULT HERO</div>
+
+            <!-- Right-side info -->
+            <div id="lobby-side">
+                <div id="lobby-season-card">
+                    <h3 class="fn-text" style="transform:none; text-shadow:1px 1px 0 #000;">SEASON 9</h3>
+                    <div class="season-row">
+                        <span>LEVEL 36</span>
+                        <span>4,360 / 12,570 XP</span>
+                    </div>
+                    <div class="xp-bar"><div class="xp-fill"></div></div>
+                    <div style="margin-top:8px; font-size:12px; font-weight:bold;">DAILY CHALLENGES</div>
+                    <div class="challenge-row">
+                        <span>Place Top 25 in Solo</span><span>0 / 1</span>
+                    </div>
+                    <div class="challenge-row">
+                        <span>Place Top 50 in Solo</span><span>2 / 3</span>
+                    </div>
+                    <div class="challenge-row">
+                        <span>SMG Eliminations</span><span>3 / 9</span>
+                    </div>
                 </div>
-                <div id="lobby-info" class="fn-text">LEVEL 23 • CHAPTER 4 • SEASON 39</div>
+
+                <div id="lobby-mode-card">
+                    <div id="lobby-mode-head">
+                        <div>
+                            <div class="mode-label fn-text" style="font-size:11px;">MODE</div>
+                            <div class="mode-value fn-text" style="font-size:20px;">SQUADS</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div class="mode-label fn-text" style="font-size:11px;">FILL</div>
+                            <div class="mode-value fn-text" style="font-size:16px;">ON</div>
+                        </div>
+                    </div>
+                    <button id="lobby-play-btn">PLAY</button>
+                </div>
             </div>
+        </div>
+
+        <div id="lobby-bottom-bar">
+            <div>Tip: Press <strong>Shift</strong> to sprint, <strong>F</strong> to build, <strong>E</strong> to interact.</div>
+            <div>ESC for mouse cursor • SPACE for actions</div>
         </div>
     </div>
 
@@ -349,7 +559,7 @@
             const S=zzfxX.createBuffer(1,v,y);
             const _=S.getChannelData(0);
             for(let k=0;k<v;k++){
-                let w=k/v,T=k/(y/n),D=Math.abs(T%2-1);
+                let w=k/v,T=k/(y/n);
                 let P=s?s>0?1-Math.cos(w*M*s):1+Math.sin(w*M*s):1;
                 let E=P>0?1:-1;P=E*Math.abs(P)**c;
                 let A=o*M*w;let B=Math.sin(A)*a;let L=Math.cos(A)*a;
@@ -367,7 +577,6 @@
             storm: new Audio('https://raw.githubusercontent.com/bellasaunders25/Game-Asset/main/shtorm_eyeincoming.mp3'),
             death: new Audio('https://raw.githubusercontent.com/bellasaunders25/Game-Asset/main/tmp_7901-951678082.mp3')
         };
-        // Fix volume and loops
         SOUNDS.chest.loop = true;
         SOUNDS.chest.volume = 0;
         SOUNDS.gun.volume = 0.4;
@@ -385,12 +594,9 @@
                 const a = uiClickBase.cloneNode();
                 a.volume = vol;
                 a.play();
-                // Stop around the 2s mark
                 setTimeout(() => {
-                    if (!a.paused) {
-                        a.pause();
-                    }
-                }, 1950);
+                    if (!a.paused) a.pause();
+                }, 1950); // ~2s
             } catch (e) {
                 console.log('UI sound error', e);
             }
@@ -398,14 +604,22 @@
 
         // ZZFX Sound Generators
         const playPickaxe = () => zzfx([1,.05,200,.03,.05,.1,2,1.4,.1]); // Thud
-        const playBuild   = () => zzfx([1,.05,400,0,.1,.1,0,1.5,.1]); // Click
-        const playHit     = () => zzfx([1,.05,100,.05,.1,.4,4,2,.1]); // Punch
+        const playBuild   = () => zzfx([1,.05,400,0,.1,.1,0,1.5,.1]); // Build click
+        const playHit     = () => zzfx([1,.05,100,.05,.1,.4,4,2,.1]); // Hit
 
-        const playStepWalk = () => zzfx([1,,80,.04,,.15,3,1.5,,,,,,,.3,,.4]);  // Footstep walk
+        const playStepWalk = () => zzfx([1,,80,.04,,.15,3,1.5,,,,,,,.3,,.4]);   // Footstep walk
         const playStepRun  = () => zzfx([1,,110,.035,,.12,3,1.8,,,,,,,.3,,.5]); // Footstep run
         const playJump     = () => zzfx([1,,260,.04,,.15,1,1.5,,,,,,,.4,,.7]);   // Jump
         const playLand     = () => zzfx([1,,90,.03,,.18,3,1.4,,,,,,,.4,,.6]);    // Landing thud
-        const playBreak    = () => zzfx([1,,50,.06,,.3,3,1.5,,,,,,,.2,,.7]);     // Tree/build break
+        const playBreak    = () => zzfx([1,,50,.06,,.3,3,1.5,,,,,,,.2,,.7]);     // Break object
+
+        // CHARACTER SKINS
+        const CHARACTER_SKINS = [
+            { id: 'ranger', display: 'FAYRESS', bodyColor: 0xc49a6c, accentColor: 0x3e4e5c },
+            { id: 'bimpaf', display: 'BIMPAF', bodyColor: 0x9ad5ff, accentColor: 0x2c3f4e },
+            { id: 'noble',  display: 'NOBLE',  bodyColor: 0x4f77ff, accentColor: 0xe3f2fd },
+            { id: 'djinn',  display: 'IDJINN', bodyColor: 0xc7b299, accentColor: 0x37474f }
+        ];
 
         // --- GAME CONFIG ---
         const CONFIG = {
@@ -457,6 +671,180 @@
 
         let lastStepTime = 0;
 
+        let playerSkinIndex = 2; // default "Noble"
+        let playerCharacter = null;
+        let playerHand = null;
+
+        // --- CHARACTER / WEAPON MESH HELPERS ---
+        function createCharacterMesh(skin) {
+            const group = new THREE.Group();
+
+            const bodyMat = new THREE.MeshStandardMaterial({ color: skin.bodyColor, roughness: 0.6, metalness: 0.1 });
+            const accentMat = new THREE.MeshStandardMaterial({ color: skin.accentColor, roughness: 0.3, metalness: 0.4 });
+
+            const body = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.2, 0.4), bodyMat);
+            body.position.y = 1.4; body.castShadow = true; group.add(body);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 18, 18), accentMat);
+            head.position.y = 2.2; head.castShadow = true; group.add(head);
+
+            // Hood / helmet ring
+            const hood = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.06, 8, 16), accentMat);
+            hood.position.y = 2.1; hood.rotation.x = Math.PI/2; hood.castShadow = true; group.add(hood);
+
+            const armGeo = new THREE.BoxGeometry(0.22, 0.9, 0.25);
+            const legGeo = new THREE.BoxGeometry(0.3, 1.1, 0.3);
+
+            const armL = new THREE.Mesh(armGeo, bodyMat);
+            armL.position.set(-0.6, 1.4, 0); armL.castShadow = true; group.add(armL);
+
+            const armR = new THREE.Mesh(armGeo, bodyMat);
+            armR.position.set(0.6, 1.4, 0); armR.castShadow = true; group.add(armR);
+
+            const legL = new THREE.Mesh(legGeo, bodyMat);
+            legL.position.set(-0.25, 0.45, 0); legL.castShadow = true; group.add(legL);
+
+            const legR = new THREE.Mesh(legGeo, bodyMat);
+            legR.position.set(0.25, 0.45, 0); legR.castShadow = true; group.add(legR);
+
+            const handR = new THREE.Object3D();
+            handR.position.set(0.16, -0.45, 0.12);
+            armR.add(handR);
+
+            group.userData.armL = armL;
+            group.userData.armR = armR;
+            group.userData.legL = legL;
+            group.userData.legR = legR;
+            group.userData.moving = false;
+            group.userData.sprinting = false;
+
+            return { mesh: group, hand: handR };
+        }
+
+        function createPickaxeMesh() {
+            const g = new THREE.Group();
+            const shaft = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.04, 0.04, 0.9, 8),
+                new THREE.MeshStandardMaterial({ color: 0x8b5a2b, roughness: 0.8 })
+            );
+            shaft.rotation.z = Math.PI/2;
+            g.add(shaft);
+
+            const head = new THREE.Mesh(
+                new THREE.BoxGeometry(0.6, 0.12, 0.18),
+                new THREE.MeshStandardMaterial({ color: 0xe0e0e0, metalness: 0.6, roughness: 0.3 })
+            );
+            head.position.set(0.25, 0, 0);
+            g.add(head);
+
+            g.rotation.z = -Math.PI/4;
+            g.rotation.y = Math.PI/2;
+            return g;
+        }
+
+        function createGunMesh(item) {
+            const lengthMap = {
+                ar: 0.9,
+                smg: 0.7,
+                shotgun: 0.85,
+                sniper: 1.3,
+                rpg: 1.1
+            };
+            const colorMap = {
+                ar: 0x9e9e9e,
+                smg: 0xff7043,
+                shotgun: 0xffc107,
+                sniper: 0x90caf9,
+                rpg: 0x66bb6a
+            };
+            const length = lengthMap[item.id] || 0.8;
+            const color  = colorMap[item.id]  || 0x9e9e9e;
+
+            const g = new THREE.Group();
+            const body = new THREE.Mesh(
+                new THREE.BoxGeometry(length, 0.15, 0.18),
+                new THREE.MeshStandardMaterial({ color, metalness: 0.5, roughness: 0.4 })
+            );
+            body.position.set(0, 0, 0);
+            g.add(body);
+
+            const grip = new THREE.Mesh(
+                new THREE.BoxGeometry(0.12, 0.25, 0.12),
+                new THREE.MeshStandardMaterial({ color: 0x111111, metalness: 0.3, roughness: 0.7 })
+            );
+            grip.position.set(-length/4, -0.16, 0);
+            g.add(grip);
+
+            g.rotation.y = Math.PI/2;
+            return g;
+        }
+
+        function equipWeapon(hand, itemOrType) {
+            if (!hand) return;
+            while (hand.children.length) hand.remove(hand.children[0]);
+            if (!itemOrType) return;
+
+            if (itemOrType === 'PICKAXE' || itemOrType.type === 'PICKAXE') {
+                hand.add(createPickaxeMesh());
+            } else if (itemOrType.type === 'GUN') {
+                hand.add(createGunMesh(itemOrType));
+            }
+        }
+
+        function updatePlayerWeaponModel() {
+            if (!playerHand) return;
+            const curItem = inventory[slotIdx];
+            if (!curItem) {
+                equipWeapon(playerHand, null);
+            } else if (curItem.type === 'PICKAXE') {
+                equipWeapon(playerHand, 'PICKAXE');
+            } else {
+                equipWeapon(playerHand, curItem);
+            }
+        }
+
+        function applyPlayerSkin() {
+            const skin = CHARACTER_SKINS[playerSkinIndex];
+            document.getElementById('skin-name').innerText = skin.display.toUpperCase();
+            document.getElementById('player-name-label').innerText = skin.display.toUpperCase();
+
+            if (playerCharacter && playerMesh) {
+                playerMesh.remove(playerCharacter);
+            }
+            const built = createCharacterMesh(skin);
+            playerCharacter = built.mesh;
+            playerHand = built.hand;
+            if (playerMesh) {
+                playerMesh.add(playerCharacter);
+            }
+            updatePlayerWeaponModel();
+        }
+
+        function animateCharacters(timeMs) {
+            const t = timeMs * 0.005;
+            function animateChar(char) {
+                if (!char) return;
+                const d = char.userData || {};
+                const moving = !!d.moving;
+                const sprinting = !!d.sprinting;
+                const speed = moving ? (sprinting ? 9 : 6) : 2;
+                const amp = moving ? (sprinting ? 0.8 : 0.5) : 0.12;
+                const w = Math.sin(t * speed) * amp;
+
+                if (d.armL && d.armR) {
+                    d.armL.rotation.x = w;
+                    d.armR.rotation.x = -w;
+                }
+                if (d.legL && d.legR) {
+                    d.legL.rotation.x = -w * 0.7;
+                    d.legR.rotation.x = w * 0.7;
+                }
+            }
+            animateChar(playerCharacter);
+            enemies.forEach(e => animateChar(e.mesh));
+        }
+
+        // --- INIT ---
         function init() {
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x5080c0);
@@ -490,6 +878,7 @@
 
             genWorld();
             updateUI();
+            applyPlayerSkin();
 
             document.addEventListener('keydown', e => {
                 keys[e.code] = true;
@@ -518,7 +907,10 @@
             const lobbyScreen = document.getElementById('lobby-screen');
             const lobbyPlayBtn = document.getElementById('lobby-play-btn');
 
-            // Start -> go to lobby
+            const skinPrev = document.getElementById('skin-prev');
+            const skinNext = document.getElementById('skin-next');
+
+            // Title PLAY => open lobby
             startBtn.addEventListener('mouseenter', () => playUiSound(0.4));
             startBtn.addEventListener('click', () => {
                 playUiSound(0.9);
@@ -529,7 +921,19 @@
                 lobbyMusic.play().catch(e => console.log('Lobby music error', e));
             });
 
-            // Lobby PLAY -> start match
+            // Lobby skin cycling
+            skinPrev.addEventListener('click', () => {
+                playUiSound(0.6);
+                playerSkinIndex = (playerSkinIndex - 1 + CHARACTER_SKINS.length) % CHARACTER_SKINS.length;
+                applyPlayerSkin();
+            });
+            skinNext.addEventListener('click', () => {
+                playUiSound(0.6);
+                playerSkinIndex = (playerSkinIndex + 1) % CHARACTER_SKINS.length;
+                applyPlayerSkin();
+            });
+
+            // Lobby PLAY => start match
             lobbyPlayBtn.addEventListener('mouseenter', () => playUiSound(0.4));
             lobbyPlayBtn.addEventListener('click', () => {
                 playUiSound(1);
@@ -541,7 +945,7 @@
                 startPrepPhase();
             });
 
-            // Hover/click sounds for end-screen buttons + reload behaviour
+            // End screen buttons
             const victoryBtn = document.getElementById('victory-restart');
             const deathBtn = document.getElementById('death-restart');
             [victoryBtn, deathBtn].forEach(btn => {
@@ -576,14 +980,24 @@
                 walls.push({mesh:t, type:'TREE', hp:200});
             }
 
-            const enMat = new THREE.MeshToonMaterial({color: 0xdd3333});
             for(let i=0; i<50; i++) {
-                const en = new THREE.Mesh(new THREE.BoxGeometry(1, 1.8, 1), enMat);
+                const skin = CHARACTER_SKINS[Math.floor(Math.random()*CHARACTER_SKINS.length)];
+                const built = createCharacterMesh(skin);
+                const enMesh = built.mesh;
                 let x = (Math.random()-0.5)*600 + 50, z = (Math.random()-0.5)*600;
-                en.position.set(x, 0.9, z); en.castShadow = true; scene.add(en);
-                const eyes = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.2, 0.1), new THREE.MeshBasicMaterial({color:0xffffff}));
-                eyes.position.set(0, 0.5, 0.46); en.add(eyes);
-                enemies.push({mesh:en, hp:100, state:'IDLE', timer:0, lastShot:0});
+                enMesh.position.set(x, 0, z); enMesh.castShadow = true;
+                scene.add(enMesh);
+                enemies.push({
+                    mesh: enMesh,
+                    hand: built.hand,
+                    hp: 100,
+                    state: 'IDLE',
+                    timer: 0,
+                    lastShot: 0,
+                    weapon: 'PICKAXE',
+                    gunData: null
+                });
+                equipWeapon(built.hand, 'PICKAXE');
             }
             
             for(let i=0; i<50; i++) spawnChest((Math.random()-0.5)*900, (Math.random()-0.5)*900);
@@ -637,8 +1051,9 @@
             setTimeout(() => document.getElementById('big-alert').style.display = 'none', 3000);
             
             enemies.forEach(e => {
-                if(e.mesh.children.length > 0 && e.mesh.children[0].material) {
-                    e.mesh.children[0].material.color.setHex(0xff0000); 
+                if(e.mesh.children.length > 0) {
+                    const first = e.mesh.children[0];
+                    if(first.material && first.material.color) first.material.color.setHex(0xff0000);
                 }
             });
             
@@ -650,7 +1065,9 @@
         function animate() {
             requestAnimationFrame(animate);
             if(player.dead) return;
+
             const dt = 0.016;
+            const timeMs = (window.performance && performance.now) ? performance.now() : Date.now();
 
             if (gameState === 'PREP') {
                 lootTimer -= dt;
@@ -665,13 +1082,13 @@
             updateStorm(dt);
             updateCast(dt);
             updateChestAudio();
+            animateCharacters(timeMs);
 
             interactables.forEach(l => { l.mesh.rotation.y += 0.02; });
             renderer.render(scene, camera);
         }
 
         function updateChestAudio() {
-            // Find closest chest
             let minDist = 9999;
             for (let obj of interactables) {
                 if (obj.type === 'CHEST') {
@@ -679,7 +1096,6 @@
                     if (d < minDist) minDist = d;
                 }
             }
-            // Max hearing dist 25
             if (minDist < 25) {
                 let vol = (1 - (minDist / 25));
                 SOUNDS.chest.volume = Math.max(0, Math.min(1, vol));
@@ -691,7 +1107,6 @@
         function updateStorm(dt) {
             if(gameState !== 'PLAY' || stormState === 'FINISHED') return;
 
-            // NPC Storm Damage Logic
             enemies.forEach(e => {
                 const d = Math.sqrt(e.mesh.position.x**2 + e.mesh.position.z**2);
                 if (d > stormRadius) {
@@ -794,25 +1209,30 @@
 
                 if(hits.length > 0 && hits[0].distance < 4) {
                     let hitObj = hits[0].object;
-                    let target = null;
+                    let hitWall = null;
+                    let hitEnemy = null;
                     while(hitObj) {
-                        target = walls.find(w => w.mesh === hitObj);
-                        if(target) break;
+                        if(!hitWall) hitWall = walls.find(w => w.mesh === hitObj);
+                        if(!hitEnemy) hitEnemy = enemies.find(e => e.mesh === hitObj);
+                        if(hitWall || hitEnemy) break;
                         hitObj = hitObj.parent;
                         if(hitObj && hitObj.type === 'Scene') break;
                     }
 
-                    if(target) {
+                    if(hitEnemy) {
                         playPickaxe();
-                        target.hp -= 50;
+                        damageEntity(hitEnemy, 40, true);
+                    } else if(hitWall) {
+                        playPickaxe();
+                        hitWall.hp -= 50;
                         player.wood += CONFIG.WOOD_PER_TREE;
                         spawnDmgText(hits[0].point, `+${CONFIG.WOOD_PER_TREE}`, true);
-                        target.mesh.position.y -= 0.2; setTimeout(()=>target.mesh.position.y+=0.2, 50);
+                        hitWall.mesh.position.y -= 0.2; setTimeout(()=>hitWall.mesh.position.y+=0.2, 50);
                         
-                        if(target.hp <= 0) {
+                        if(hitWall.hp <= 0) {
                             playBreak();
-                            scene.remove(target.mesh);
-                            walls = walls.filter(w => w !== target);
+                            scene.remove(hitWall.mesh);
+                            walls = walls.filter(w => w !== hitWall);
                         }
                         updateUI();
                     }
@@ -911,7 +1331,7 @@
             b.position.copy(pos).add(new THREE.Vector3(0, 1.5, 0));
             b.lookAt(b.position.clone().add(dir)); scene.add(b);
             
-            let dmg = isEnemy ? 10 : itemData.dmg;
+            let dmg = isEnemy ? (itemData ? itemData.dmg : 10) : itemData.dmg;
             if(!isEnemy) {
                 camPivot.rotation.x += 0.02;
                 const el = document.getElementById('reticle-spread'); 
@@ -928,16 +1348,14 @@
                 
                 let hit = false;
                 if(!b.isEnemy) { 
-                    // Player shots: Hit Enemies
                     for(let e of enemies) {
                         if(b.mesh.position.distanceTo(e.mesh.position) < 2.5) {
                             damageEntity(e, b.dmg, true); scene.remove(b.mesh); bullets.splice(i,1); hit=true; break;
                         }
                     }
                 } else { 
-                    // Enemy shots
                      if(b.mesh.position.distanceTo(playerMesh.position) < 2.0) {
-                        damagePlayer(10); scene.remove(b.mesh); bullets.splice(i,1); hit=true;
+                        damagePlayer(b.dmg); scene.remove(b.mesh); bullets.splice(i,1); hit=true;
                     }
                     if(!hit) {
                         for(let e of enemies) {
@@ -962,10 +1380,9 @@
         }
         
         function killEnemy(e) {
-             // Play death sound if player is close enough
              if(e.mesh.position.distanceTo(playerMesh.position) < 40) {
                  if(SOUNDS.death.currentTime > 0) SOUNDS.death.currentTime = 0;
-                 SOUNDS.death.play().catch(e=>{});
+                 SOUNDS.death.play().catch(err=>{});
              }
              scene.remove(e.mesh); enemies = enemies.filter(en => en !== e);
              player.kills++; spawnItemDrop(e.mesh.position, null); updateUI();
@@ -1002,7 +1419,6 @@
             const now = (window.performance && performance.now) ? performance.now() : Date.now();
             const prevGrounded = player.onGround;
 
-            // Sprint with Shift
             const isSprinting = (keys['ShiftLeft'] || keys['ShiftRight']);
             let speed = CONFIG.SPEED * (isSprinting ? CONFIG.RUN_MULT : 1);
             let moving = false;
@@ -1012,7 +1428,6 @@
             if(keys['KeyA']) { playerMesh.translateX(-speed); moving = true; }
             if(keys['KeyD']) { playerMesh.translateX(speed);  moving = true; }
 
-            // Gravity / vertical
             player.vy -= CONFIG.GRAVITY;
             playerMesh.position.y += player.vy;
             player.onGround = false;
@@ -1031,19 +1446,21 @@
                 player.onGround = true;
             }
 
-            // Jump
             if(keys['Space'] && player.onGround) {
                 player.vy = CONFIG.JUMP;
                 player.onGround = false;
                 playJump();
             }
 
-            // Landing sound
             if(!prevGrounded && player.onGround) {
                 playLand();
             }
 
-            // Footsteps (walk / run)
+            if(playerCharacter) {
+                playerCharacter.userData.moving = moving;
+                playerCharacter.userData.sprinting = isSprinting;
+            }
+
             if(player.onGround && moving) {
                 const interval = isSprinting ? 230 : 350;
                 if(now - lastStepTime > interval) {
@@ -1060,6 +1477,30 @@
             } else intDiv.style.display = 'none';
         }
 
+        function enemyLootCheck(e) {
+            if(e.weapon !== 'PICKAXE') return;
+            let chestIndex = -1;
+            for(let i=0;i<interactables.length;i++) {
+                const obj = interactables[i];
+                if(obj.type === 'CHEST' && e.mesh.position.distanceTo(obj.mesh.position) < 3.2) {
+                    chestIndex = i; break;
+                }
+            }
+            if(chestIndex === -1) return;
+
+            const chest = interactables[chestIndex];
+            const gunPool = ITEMS.filter(it => it.type === 'GUN');
+            const base = gunPool[Math.floor(Math.random()*gunPool.length)];
+            const gun = {...base};
+            gun.ammo = base.ammo * 2;
+            e.weapon = 'GUN';
+            e.gunData = gun;
+            equipWeapon(e.hand, gun);
+
+            scene.remove(chest.mesh);
+            interactables.splice(chestIndex,1);
+        }
+
         // --- AI LOGIC (WAR + PREP) ---
         function updateEnemies() {
             const now = Date.now();
@@ -1070,6 +1511,8 @@
                     e.timer--; 
                     if(e.timer<=0) { e.rot = Math.random()*Math.PI*2; e.timer=80; }
                     e.mesh.rotation.y = e.rot; e.mesh.translateZ(0.1);
+                    e.mesh.userData.moving = true;
+                    enemyLootCheck(e);
                     return;
                 }
                 
@@ -1078,27 +1521,45 @@
                     let minDist = 200;
 
                     const dPlayer = e.mesh.position.distanceTo(playerMesh.position);
-                    if(dPlayer < minDist) { target = { pos: playerMesh.position }; minDist = dPlayer; }
+                    if(dPlayer < minDist) { target = { pos: playerMesh.position, isPlayer:true }; minDist = dPlayer; }
 
                     for(let i=0; i<10; i++) {
                          const other = enemies[Math.floor(Math.random()*enemies.length)];
                          if(other !== e && other.hp > 0) {
                              const d = e.mesh.position.distanceTo(other.mesh.position);
-                             if(d < minDist) { target = { pos: other.mesh.position }; minDist = d; }
+                             if(d < minDist) { target = { pos: other.mesh.position, enemyRef: other }; minDist = d; }
                          }
                     }
 
                     if(target) {
                          e.mesh.lookAt(target.pos.x, e.mesh.position.y, target.pos.z);
-                         if(minDist > 20) e.mesh.translateZ(0.08);
-                         if(now - e.lastShot > 1500) {
-                             shoot(e.mesh.position, new THREE.Vector3().subVectors(target.pos, e.mesh.position).normalize(), true, null);
-                             e.lastShot = now;
+                         if(minDist > 5) {
+                             e.mesh.translateZ(0.08);
+                             e.mesh.userData.moving = true;
+                         } else {
+                             e.mesh.userData.moving = false;
+                         }
+
+                         if(e.weapon === 'GUN' && e.gunData) {
+                             if(now - e.lastShot > e.gunData.rate) {
+                                 const dir = new THREE.Vector3().subVectors(target.pos, e.mesh.position).normalize();
+                                 shoot(e.mesh.position, dir, true, e.gunData);
+                                 e.lastShot = now;
+                             }
+                         } else { // pickaxe melee
+                             if(minDist < 3.2 && now - e.lastShot > 700) {
+                                 if(target.isPlayer) damagePlayer(15);
+                                 else if(target.enemyRef) damageEntity(target.enemyRef, 20, true);
+                                 e.lastShot = now;
+                             }
                          }
                     } else {
                         e.timer--; if(e.timer<=0) { e.rot = Math.random()*Math.PI*2; e.timer=100; }
                         e.mesh.rotation.y = e.rot; e.mesh.translateZ(0.05);
+                        e.mesh.userData.moving = true;
                     }
+
+                    enemyLootCheck(e);
                 }
             });
         }
@@ -1125,6 +1586,8 @@
             const cur = inventory[slotIdx];
             document.getElementById('ammo-hud').style.display = (cur && cur.ammo!==undefined) ? 'block' : 'none';
             if(cur && cur.ammo!==undefined) document.getElementById('ammo-hud-count').innerText = cur.ammo;
+
+            updatePlayerWeaponModel();
         }
         function setSlot(i) { if(i>=0 && i<5) { slotIdx = i; isBuildMode = false; cancelCast(); updateUI(); } }
         function toggleBuild() { isBuildMode = !isBuildMode; cancelCast(); updateUI(); }
