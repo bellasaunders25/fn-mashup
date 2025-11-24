@@ -47,7 +47,13 @@
             flex-direction: column;
             padding: 16px 26px 18px 26px;
             box-sizing: border-box;
-            background: radial-gradient(circle at top, #3e7bff 0%, #1c38a0 40%, #02061a 100%);
+            /* slightly transparent so we can see the 3D stage behind */
+            background: radial-gradient(
+                circle at top,
+                rgba(62,123,255,0.90) 0%,
+                rgba(28,56,160,0.92) 40%,
+                rgba(2,6,26,0.96) 100%
+            );
             color: #fff;
             z-index: 2000;
         }
@@ -93,7 +99,7 @@
             gap: 20px;
         }
 
-        /* PARTY / SQUAD AREA */
+        /* PARTY / SQUAD AREA (2D overlay only – 3D is in Three.js) */
         #lobby-party {
             position: relative;
             flex: 1.2;
@@ -408,7 +414,7 @@
                     <div class="party-banner banner-teal"></div>
                     <div class="party-character">
                         <div class="party-stand"></div>
-                        <!-- actual 3D character is in the scene; this is just the stand -->
+                        <!-- 3D character is rendered on the 3D podium -->
                     </div>
                     <div class="party-footer">
                         <div class="party-name" id="player-name-label">NOBLE</div>
@@ -621,6 +627,15 @@
             { id: 'djinn',  display: 'IDJINN', bodyColor: 0xc7b299, accentColor: 0x37474f }
         ];
 
+        // 3D lobby constants / state
+        const LOBBY_STAGE_Z = 900;
+        const GAME_CAMERA_OFFSET  = new THREE.Vector3(0.6, 0, 2);
+        const LOBBY_CAMERA_OFFSET = new THREE.Vector3(0, 0.4, 4.8);
+
+        let lobbyStageGroup = null;
+        let lobbySlots3D = [];
+        let inLobbyView = false;
+
         // --- GAME CONFIG ---
         const CONFIG = {
             SPEED: 0.16,
@@ -671,7 +686,7 @@
 
         let lastStepTime = 0;
 
-        let playerSkinIndex = 2; // default "Noble"
+        let playerSkinIndex = 2; // default "NOBLE"
         let playerCharacter = null;
         let playerHand = null;
 
@@ -688,7 +703,6 @@
             const head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 18, 18), accentMat);
             head.position.y = 2.2; head.castShadow = true; group.add(head);
 
-            // Hood / helmet ring
             const hood = new THREE.Mesh(new THREE.TorusGeometry(0.34, 0.06, 8, 16), accentMat);
             hood.position.y = 2.1; hood.rotation.x = Math.PI/2; hood.castShadow = true; group.add(hood);
 
@@ -820,6 +834,103 @@
             updatePlayerWeaponModel();
         }
 
+        // 3D lobby stage (podiums + banners)
+        function createLobbyStage3D() {
+            lobbyStageGroup = new THREE.Group();
+            scene.add(lobbyStageGroup);
+
+            const xOffsets = [-7.5, 0, 7.5, 15];
+            const bannerColors = [0xff6fb4, 0x4fe4ff, 0xbfb79e, 0xb38cff];
+
+            for (let i = 0; i < 4; i++) {
+                const slot = new THREE.Group();
+                slot.position.set(xOffsets[i], 0, LOBBY_STAGE_Z);
+                lobbyStageGroup.add(slot);
+
+                const radius = (i === 1) ? 2.1 : 1.7;
+                const discGeo = new THREE.CylinderGeometry(radius, radius, 0.35, 32);
+                const discMat = new THREE.MeshStandardMaterial({
+                    color: 0xffffff,
+                    emissive: i === 1 ? 0x4ea8ff : 0x000000,
+                    emissiveIntensity: i === 1 ? 1.0 : 0.0,
+                    metalness: 0.4,
+                    roughness: 0.35
+                });
+                const disc = new THREE.Mesh(discGeo, discMat);
+                disc.position.y = 0.18;
+                disc.receiveShadow = true;
+                slot.add(disc);
+
+                const ringGeo = new THREE.CylinderGeometry(
+                    radius + 0.15,
+                    radius + 0.15,
+                    0.06,
+                    32,
+                    1,
+                    true
+                );
+                const ringMat = new THREE.MeshStandardMaterial({
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.18,
+                    emissive: 0x4ea8ff,
+                    emissiveIntensity: 0.6,
+                    side: THREE.DoubleSide
+                });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.position.y = 0.22;
+                slot.add(ring);
+
+                const panelGeo = new THREE.PlaneGeometry(3.4, 8.2);
+                const panelMat = new THREE.MeshStandardMaterial({
+                    color: bannerColors[i],
+                    transparent: true,
+                    opacity: 0.88,
+                    side: THREE.DoubleSide
+                });
+                const panel = new THREE.Mesh(panelGeo, panelMat);
+                panel.position.set(0, 4.4, -0.35);
+                slot.add(panel);
+
+                lobbySlots3D.push(slot);
+            }
+
+            const spot = new THREE.SpotLight(0xffffff, 2.2, 60, Math.PI / 4, 0.4, 1);
+            spot.position.set(0, 12, LOBBY_STAGE_Z + 8);
+            spot.target = playerMesh;
+            spot.castShadow = true;
+            lobbyStageGroup.add(spot);
+            lobbyStageGroup.add(spot.target);
+
+            lobbyStageGroup.visible = false;
+        }
+
+        function enterLobbyView() {
+            inLobbyView = true;
+
+            playerMesh.position.set(0, 0, LOBBY_STAGE_Z);
+            playerMesh.rotation.set(0, Math.PI, 0);
+            camPivot.rotation.set(0, 0, 0);
+            camera.position.copy(LOBBY_CAMERA_OFFSET);
+
+            if (playerCharacter) {
+                playerCharacter.userData.moving = false;
+                playerCharacter.userData.sprinting = false;
+            }
+
+            if (lobbyStageGroup) lobbyStageGroup.visible = true;
+        }
+
+        function enterGameView() {
+            inLobbyView = false;
+            if (lobbyStageGroup) lobbyStageGroup.visible = false;
+
+            playerMesh.position.set(0, 0, 0);
+            playerMesh.rotation.set(0, 0, 0);
+            camPivot.rotation.set(0, 0, 0);
+            camera.position.copy(GAME_CAMERA_OFFSET);
+        }
+
         function animateCharacters(timeMs) {
             const t = timeMs * 0.005;
             function animateChar(char) {
@@ -857,11 +968,18 @@
             document.getElementById('game-container').appendChild(renderer.domElement);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            playerMesh = new THREE.Group(); scene.add(playerMesh);
-            camPivot = new THREE.Object3D(); camPivot.position.set(0, 1.7, 0); playerMesh.add(camPivot);
-            camera.position.set(0.6, 0, 2); camPivot.add(camera);
+            playerMesh = new THREE.Group();
+            scene.add(playerMesh);
 
-            const amb = new THREE.AmbientLight(0xffffff, 0.7); scene.add(amb);
+            camPivot = new THREE.Object3D();
+            camPivot.position.set(0, 1.7, 0);
+            playerMesh.add(camPivot);
+
+            camera.position.copy(GAME_CAMERA_OFFSET);
+            camPivot.add(camera);
+
+            const amb = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(amb);
             const sun = new THREE.DirectionalLight(0xfff0dd, 0.9); 
             sun.position.set(100, 200, 50); sun.castShadow = true; 
             sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.far = 500; 
@@ -875,6 +993,9 @@
             stormMesh = new THREE.Mesh(stormGeo, stormMat);
             stormMesh.position.y = 75; stormMesh.scale.set(stormRadius, 1, stormRadius);
             scene.add(stormMesh);
+
+            // 3D lobby stage (podiums + banners)
+            createLobbyStage3D();
 
             genWorld();
             updateUI();
@@ -919,6 +1040,9 @@
                 zzfxX.resume();
                 lobbyMusic.currentTime = 0;
                 lobbyMusic.play().catch(e => console.log('Lobby music error', e));
+
+                // place the player on the 3D centre podium
+                enterLobbyView();
             });
 
             // Lobby skin cycling
@@ -938,6 +1062,10 @@
             lobbyPlayBtn.addEventListener('click', () => {
                 playUiSound(1);
                 lobbyScreen.style.display = 'none';
+
+                // hide 3D lobby stage and move player back into the world
+                enterGameView();
+
                 document.body.requestPointerLock();
                 lobbyMusic.pause();
                 lobbyMusic.currentTime = 0;
@@ -1589,6 +1717,7 @@
 
             updatePlayerWeaponModel();
         }
+
         function setSlot(i) { if(i>=0 && i<5) { slotIdx = i; isBuildMode = false; cancelCast(); updateUI(); } }
         function toggleBuild() { isBuildMode = !isBuildMode; cancelCast(); updateUI(); }
 
